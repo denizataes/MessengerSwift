@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegisterViewController: UIViewController {
     
@@ -93,7 +94,7 @@ class RegisterViewController: UIViewController {
     
     private let imageView: UIImageView = {
         let imageview = UIImageView()
-        imageview.image = UIImage(systemName: "person")
+        imageview.image = UIImage(systemName: "person.circle")
         imageview.tintColor = .gray
         imageview.contentMode = .scaleAspectFit
         imageview.layer.masksToBounds = true
@@ -115,7 +116,7 @@ class RegisterViewController: UIViewController {
         
         
         
-        registerButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(registerButtonTapped), for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
@@ -179,7 +180,7 @@ class RegisterViewController: UIViewController {
         
     }
     
-    @objc private func loginButtonTapped(){
+    @objc private func registerButtonTapped(){
         emailField.resignFirstResponder()
         passwordField.resignFirstResponder()
         
@@ -195,15 +196,33 @@ class RegisterViewController: UIViewController {
             alertUserLoginError()
             return
         }
-        //Firebase Log In
+        DatabaseManager.shared.userExist(with: email) {[weak self] exist in
+            guard let strongSelf = self else { return }
+            guard !exist else {
+                strongSelf.alertUserLoginError(message: "Looks like a user account for that email address already exists")
+                return
+            }
+            
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                guard authResult != nil, error == nil else {
+                    print("Error creating user")
+                    return
+                }
+                
+                DatabaseManager.shared.insertUser(with: .init(firstName: firstName, lastName: lastName, emailAddress: email))
+                strongSelf.navigationController?.dismiss(animated: true)
+                
+            }
+        }
+        
         
     }
     
-    func alertUserLoginError(){
+    func alertUserLoginError(message: String = "Please enter all information to create a new account"){
         
         let alert = UIAlertController(
             title: "Woops",
-            message: "Please enter all information to create a new account",
+            message: message,
             preferredStyle: .alert)
         alert.addAction(
             UIAlertAction(
@@ -229,7 +248,7 @@ extension RegisterViewController: UITextFieldDelegate {
             passwordField.becomeFirstResponder()
         }
         else if textField == passwordField{
-            loginButtonTapped()
+            registerButtonTapped()
         }
         return true
     }
