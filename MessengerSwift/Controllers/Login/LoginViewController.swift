@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import FirebaseAuth
+import Firebase
 import FBSDKLoginKit
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
     
@@ -74,11 +75,27 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private let googleLogInButton = GIDSignInButton()
     
+    private var loginObserver: NSObjectProtocol?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification,
+                                                               object: nil,
+                                                               queue: .main) {[weak self] _ in
+            guard let strongSelf = self else { return }
+            strongSelf.navigationController?.dismiss(animated: true)
+            
+        }
+        
+        
+        
+        GIDSignIn.sharedInstance()?.presentingViewController = self
+        
+        
         title = "Log In"
         view.backgroundColor = .white
         
@@ -102,90 +119,99 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
+        scrollView.addSubview(googleLogInButton)
         
     }
+
+    deinit {
+        if loginObserver != nil{
+            NotificationCenter.default.removeObserver(loginObserver!)
+        }
+    }
+
+override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    scrollView.frame = view.bounds //ekranın tamamı
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        scrollView.frame = view.bounds //ekranın tamamı
-        
-        
-        let size = view.width/3
-        imageView.frame = CGRect(x: (scrollView.width-size)/2,
-                                 y: 20,
-                                 width: size,
-                                 height: size
-        )
-        
-        emailField.frame = CGRect(x: 30,
-                                  y: imageView.bottom + 10,
-                                  width: scrollView.width-60,
-                                  height: 52)
-        
-        passwordField.frame = CGRect(x: 30,
-                                     y: emailField.bottom + 10,
+    
+    let size = view.width/3
+    imageView.frame = CGRect(x: (scrollView.width-size)/2,
+                             y: 20,
+                             width: size,
+                             height: size
+    )
+    
+    emailField.frame = CGRect(x: 30,
+                              y: imageView.bottom + 10,
+                              width: scrollView.width-60,
+                              height: 52)
+    
+    passwordField.frame = CGRect(x: 30,
+                                 y: emailField.bottom + 10,
+                                 width: scrollView.width-60,
+                                 height: 52)
+    
+    loginButton.frame = CGRect(x: 30,
+                               y: passwordField.bottom + 10,
+                               width: scrollView.width-60,
+                               height: 52)
+    
+    facebookLoginButton.frame = CGRect(x: 30,
+                                       y: loginButton.bottom + 10,
+                                       width: scrollView.width-60,
+                                       height: 52)
+    
+    
+    googleLogInButton.frame = CGRect(x: 30,
+                                     y: facebookLoginButton.bottom + 10,
                                      width: scrollView.width-60,
                                      height: 52)
-        
-        loginButton.frame = CGRect(x: 30,
-                                   y: passwordField.bottom + 10,
-                                   width: scrollView.width-60,
-                                   height: 52)
-        
-        facebookLoginButton.frame = CGRect(x: 30,
-                                           y: loginButton.bottom + 10,
-                                           width: scrollView.width-60,
-                                           height: 52)
-        
-        facebookLoginButton.center = scrollView.center
-        facebookLoginButton.frame.origin.y = loginButton.bottom+20
-        
-        
-    }
     
-    @objc private func loginButtonTapped(){
-        
-        emailField.resignFirstResponder()
-        passwordField.resignFirstResponder()
-        
-        guard let email = emailField.text, let password = passwordField.text, !email.isEmpty, !password.isEmpty, password.count >= 6 else {
-            alertUserLoginError()
+}
+
+@objc private func loginButtonTapped(){
+    
+    emailField.resignFirstResponder()
+    passwordField.resignFirstResponder()
+    
+    guard let email = emailField.text, let password = passwordField.text, !email.isEmpty, !password.isEmpty, password.count >= 6 else {
+        alertUserLoginError()
+        return
+    }
+    FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+        guard let strongSelf = self else{ return }
+        guard let result = authResult, error == nil else {
+            print("Failed to log in user with email: \(email)")
             return
         }
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
-            guard let strongSelf = self else{ return }
-            guard let result = authResult, error == nil else {
-                print("Failed to log in user with email: \(email)")
-                return
-            }
-            strongSelf.navigationController?.dismiss(animated: true)
-            let user = result.user
-            print("Logged In User: \(user)")
-            
-        }
+        strongSelf.navigationController?.dismiss(animated: true)
+        let user = result.user
+        print("Logged In User: \(user)")
         
     }
     
-    func alertUserLoginError(){
-        
-        let alert = UIAlertController(
-            title: "Woops",
-            message: "Please enter all information to log in",
-            preferredStyle: .alert)
-        alert.addAction(
-            UIAlertAction(
-                title: "Dismiss",
-                style: .cancel)
-        )
-        present(alert,animated: true)
-    }
+}
+
+func alertUserLoginError(){
     
-    @objc private func didTapRegister() {
-        let vc = RegisterViewController()
-        vc.title = "Create Account"
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    
+    let alert = UIAlertController(
+        title: "Woops",
+        message: "Please enter all information to log in",
+        preferredStyle: .alert)
+    alert.addAction(
+        UIAlertAction(
+            title: "Dismiss",
+            style: .cancel)
+    )
+    present(alert,animated: true)
+}
+
+@objc private func didTapRegister() {
+    let vc = RegisterViewController()
+    vc.title = "Create Account"
+    navigationController?.pushViewController(vc, animated: true)
+}
+
 }
 
 extension LoginViewController: UITextFieldDelegate {
@@ -259,5 +285,5 @@ extension LoginViewController: LoginButtonDelegate {
         
     }
     
-    
 }
+
