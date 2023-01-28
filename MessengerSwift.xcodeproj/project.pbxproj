@@ -42,6 +42,7 @@
 		A036B7732968BDE7009827EE /* NewConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationViewController.swift; sourceTree = "<group>"; };
 		A036B7752968BDF0009827EE /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		A0AEEC4C2968C3C800F1F678 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A0B9A9C729853B0800D066CD /* MessengerSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MessengerSwift.entitlements; sourceTree = "<group>"; };
 		A0BF0E1B2981AD1C00052926 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A0BF0E1F2981B85600052926 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		A44D8321B73C2CAA79BC5571 /* Pods_MessengerSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MessengerSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -98,6 +99,7 @@
 		A036B7502968BBE8009827EE /* MessengerSwift */ = {
 			isa = PBXGroup;
 			children = (
+				A0B9A9C729853B0800D066CD /* MessengerSwift.entitlements */,
 				A0BF0E1B2981AD1C00052926 /* GoogleService-Info.plist */,
 				A036B7692968BC6E009827EE /* Resources */,
 				A036B7682968BC67009827EE /* ViewModels */,
@@ -446,6 +448,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MessengerSwift/MessengerSwift.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 68KQTL44VS;
@@ -476,6 +479,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MessengerSwift/MessengerSwift.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 68KQTL44VS;
