@@ -197,6 +197,11 @@ override func viewDidLayoutSubviews() {
         }
         strongSelf.navigationController?.dismiss(animated: true)
         let user = result.user
+        
+        UserDefaults.standard.set(email, forKey: "email")
+        
+        
+        
         print("Logged In User: \(user)")
         
     }
@@ -268,6 +273,8 @@ extension LoginViewController: LoginButtonDelegate {
                 print("Failed to get email and name from facebook result")
                 return
             }
+            
+            UserDefaults.standard.set(email, forKey: "email")
             
             
             DatabaseManager.shared.userExist(with: email) { exists in
