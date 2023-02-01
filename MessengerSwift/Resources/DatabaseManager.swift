@@ -86,6 +86,7 @@ extension DatabaseManager{
               
             }
     }
+    
     public func getAllUsers(completion: @escaping (Result<[[String: String]], Error>) -> Void){
         database.child("users").observeSingleEvent(of: .value) { snapshot in
             guard let value = snapshot.value as? [[String: String]] else {
@@ -115,4 +116,31 @@ struct ChatAppUser {
     var profilePictureFileName: String {
         return "\(safeEmail)_profile_picture.png"
     }
+}
+
+//MARK: - Sending Messages / conversations
+extension DatabaseManager {
+    
+    // Creates a new conversation with targer user email and first message sent
+    public func createNewConversation(with otherUserEmail: String, firstMessage: Message, completion: @escaping (Bool) -> Void){
+        
+    }
+    
+    //Fetches and returns all conversations for the user with passed in email
+    public func getAllConversations(for email: String, completion: @escaping(Result<String, Error>) -> Void){
+        
+    }
+    
+    //Get all messages for a given conversation
+    public func getAllMessagesForConversation(with id: String, completion: @escaping(Result<String, Error>) -> Void){
+        
+    }
+    
+    
+    //Sends a message with target conversation and message
+    public func sendMessage(to conversation: String, message: Message, completion: @escaping (Bool) -> Void){
+        
+    }
+    
+    
 }
