@@ -12,7 +12,7 @@ import GoogleSignIn
 import JGProgressHUD
 
 class LoginViewController: UIViewController {
-
+    
     private let spinner = JGProgressHUD(style: .dark)
     
     private let scrollView: UIScrollView = {
@@ -125,109 +125,128 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(googleLogInButton)
         
     }
-
+    
     deinit {
         if loginObserver != nil{
             NotificationCenter.default.removeObserver(loginObserver!)
         }
     }
-
-override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-    scrollView.frame = view.bounds //ekranın tamamı
     
-    
-    let size = view.width/3
-    imageView.frame = CGRect(x: (scrollView.width-size)/2,
-                             y: 20,
-                             width: size,
-                             height: size
-    )
-    
-    emailField.frame = CGRect(x: 30,
-                              y: imageView.bottom + 10,
-                              width: scrollView.width-60,
-                              height: 52)
-    
-    passwordField.frame = CGRect(x: 30,
-                                 y: emailField.bottom + 10,
-                                 width: scrollView.width-60,
-                                 height: 52)
-    
-    loginButton.frame = CGRect(x: 30,
-                               y: passwordField.bottom + 10,
-                               width: scrollView.width-60,
-                               height: 52)
-    
-    facebookLoginButton.frame = CGRect(x: 30,
-                                       y: loginButton.bottom + 10,
-                                       width: scrollView.width-60,
-                                       height: 52)
-    
-    
-    googleLogInButton.frame = CGRect(x: 30,
-                                     y: facebookLoginButton.bottom + 10,
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollView.frame = view.bounds //ekranın tamamı
+        
+        
+        let size = view.width/3
+        imageView.frame = CGRect(x: (scrollView.width-size)/2,
+                                 y: 20,
+                                 width: size,
+                                 height: size
+        )
+        
+        emailField.frame = CGRect(x: 30,
+                                  y: imageView.bottom + 10,
+                                  width: scrollView.width-60,
+                                  height: 52)
+        
+        passwordField.frame = CGRect(x: 30,
+                                     y: emailField.bottom + 10,
                                      width: scrollView.width-60,
                                      height: 52)
-    
-}
-
-@objc private func loginButtonTapped(){
-    
-    emailField.resignFirstResponder()
-    passwordField.resignFirstResponder()
-    
-    guard let email = emailField.text, let password = passwordField.text, !email.isEmpty, !password.isEmpty, password.count >= 6 else {
-        alertUserLoginError()
-        return
+        
+        loginButton.frame = CGRect(x: 30,
+                                   y: passwordField.bottom + 10,
+                                   width: scrollView.width-60,
+                                   height: 52)
+        
+        facebookLoginButton.frame = CGRect(x: 30,
+                                           y: loginButton.bottom + 10,
+                                           width: scrollView.width-60,
+                                           height: 52)
+        
+        
+        googleLogInButton.frame = CGRect(x: 30,
+                                         y: facebookLoginButton.bottom + 10,
+                                         width: scrollView.width-60,
+                                         height: 52)
+        
     }
-    spinner.show(in: view)
     
-    FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+    @objc private func loginButtonTapped(){
         
-        guard let strongSelf = self else{ return }
-        DispatchQueue.main.async {
-            strongSelf.spinner.dismiss()
-        }
+        emailField.resignFirstResponder()
+        passwordField.resignFirstResponder()
         
-        
-        guard let result = authResult, error == nil else {
-            print("Failed to log in user with email: \(email)")
+        guard let email = emailField.text, let password = passwordField.text, !email.isEmpty, !password.isEmpty, password.count >= 6 else {
+            alertUserLoginError()
             return
         }
-        strongSelf.navigationController?.dismiss(animated: true)
-        let user = result.user
+        spinner.show(in: view)
         
-        UserDefaults.standard.set(email, forKey: "email")
-        
-        
-        
-        print("Logged In User: \(user)")
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+            
+            guard let strongSelf = self else{ return }
+            DispatchQueue.main.async {
+                strongSelf.spinner.dismiss()
+            }
+            
+            
+            guard let result = authResult, error == nil else {
+                print("Failed to log in user with email: \(email)")
+                return
+            }
+            strongSelf.navigationController?.dismiss(animated: true)
+            let user = result.user
+            
+            let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+            
+            DatabaseManager.shared.getDataFor(path: safeEmail) { result in
+                switch result{
+                case .success(let data):
+                    guard let userData = data as? [String: Any],
+                          let firstName = userData["first_name"] as? String,
+                          let lastName = userData["last_name"] as? String
+                    else {
+                        return
+                    }
+                    UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+                case .failure(let error):
+                    print("failed to read daha with error \(error)")
+                }
+            }
+            
+            
+            UserDefaults.standard.set(email, forKey: "email")
+            
+            
+            
+            
+            print("Logged In User: \(user)")
+            strongSelf.navigationController?.dismiss(animated: true)
+        }
         
     }
     
-}
-
-func alertUserLoginError(){
+    func alertUserLoginError(){
+        
+        let alert = UIAlertController(
+            title: "Woops",
+            message: "Please enter all information to log in",
+            preferredStyle: .alert)
+        alert.addAction(
+            UIAlertAction(
+                title: "Dismiss",
+                style: .cancel)
+        )
+        present(alert,animated: true)
+    }
     
-    let alert = UIAlertController(
-        title: "Woops",
-        message: "Please enter all information to log in",
-        preferredStyle: .alert)
-    alert.addAction(
-        UIAlertAction(
-            title: "Dismiss",
-            style: .cancel)
-    )
-    present(alert,animated: true)
-}
-
-@objc private func didTapRegister() {
-    let vc = RegisterViewController()
-    vc.title = "Create Account"
-    navigationController?.pushViewController(vc, animated: true)
-}
-
+    @objc private func didTapRegister() {
+        let vc = RegisterViewController()
+        vc.title = "Create Account"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
 }
 
 extension LoginViewController: UITextFieldDelegate {
@@ -275,6 +294,7 @@ extension LoginViewController: LoginButtonDelegate {
             }
             
             UserDefaults.standard.set(email, forKey: "email")
+            UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
             
             
             DatabaseManager.shared.userExist(with: email) { exists in
