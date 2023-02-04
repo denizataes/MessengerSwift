@@ -215,7 +215,7 @@ class RegisterViewController: UIViewController {
             
             FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
                 guard authResult != nil, error == nil else {
-                    print("Error creating user")
+                    print("Error creating user ERROR : -> \(error)")
                     return
                 }
                 let chatUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
