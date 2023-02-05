@@ -26,6 +26,7 @@
 		A0AEEC4D2968C3C800F1F678 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0AEEC4C2968C3C800F1F678 /* Extensions.swift */; };
 		A0BF0E1C2981AD1C00052926 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A0BF0E1B2981AD1C00052926 /* GoogleService-Info.plist */; };
 		A0BF0E202981B85600052926 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BF0E1F2981B85600052926 /* DatabaseManager.swift */; };
+		A0DFB27529904E87002B6BF8 /* NewConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0DFB27429904E87002B6BF8 /* NewConversationCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		A0B9A9C729853B0800D066CD /* MessengerSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MessengerSwift.entitlements; sourceTree = "<group>"; };
 		A0BF0E1B2981AD1C00052926 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A0BF0E1F2981B85600052926 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		A0DFB27429904E87002B6BF8 /* NewConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationCell.swift; sourceTree = "<group>"; };
 		C7C18C6E9C36594D3F981EE9 /* Pods-MessengerSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MessengerSwift.release.xcconfig"; path = "Target Support Files/Pods-MessengerSwift/Pods-MessengerSwift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -137,6 +139,7 @@
 				A036B76A2968BC86009827EE /* Storyboards */,
 				A036B75A2968BBE9009827EE /* Assets.xcassets */,
 				A0057231298B187D00C6F92D /* ConversationTableViewCell.swift */,
+				A0DFB27429904E87002B6BF8 /* NewConversationCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A036B76C2968BD90009827EE /* LoginViewController.swift in Sources */,
+				A0DFB27529904E87002B6BF8 /* NewConversationCell.swift in Sources */,
 				A0BF0E202981B85600052926 /* DatabaseManager.swift in Sources */,
 				A036B76E2968BD9B009827EE /* RegisterViewController.swift in Sources */,
 				A036B7742968BDE7009827EE /* NewConversationViewController.swift in Sources */,
