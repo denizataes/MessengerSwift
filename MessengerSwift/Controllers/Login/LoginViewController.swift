@@ -123,8 +123,10 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
         scrollView.addSubview(googleLogInButton)
+
         
     }
+
     
     deinit {
         if loginObserver != nil{

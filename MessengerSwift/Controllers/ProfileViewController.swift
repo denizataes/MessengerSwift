@@ -9,6 +9,7 @@ import UIKit
 import FirebaseAuth
 import FBSDKLoginKit
 import SDWebImage
+import GoogleSignIn
 
 enum ProfileViewModelType{
     case info, logout
@@ -46,9 +47,13 @@ class ProfileViewController: UIViewController {
                                                 style: .destructive,handler: { [weak self] _ in
                 guard let strongSelf = self else {return}
                 
+                UserDefaults.standard.setValue(nil, forKey: "name")
+                UserDefaults.standard.setValue(nil, forKey: "email")
+                
                 //Log Out Facebook
                 
                 FBSDKLoginKit.LoginManager().logOut()
+                GIDSignIn.sharedInstance()?.signOut()
                 do{
                     try FirebaseAuth.Auth.auth().signOut()
                     let vc = LoginViewController()
